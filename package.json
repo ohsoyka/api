@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "export AWS_ACCESS_KEY_ID=$OHSOYKA_DIGITAL_OCEAN_SPACE_KEY && AWS_SECRET_ACCESS_KEY=$OHSOYKA_DIGITAL_OCEAN_SPACE_SECRET && nodemon app.js",
+    "lint": "eslint \"**/*.js\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
