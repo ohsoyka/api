@@ -4,6 +4,7 @@ const slugifyText = require('../helpers/slugify-text');
 module.exports = model('Project', {
   title: String,
   description: String,
+  body: String,
   path: { type: String, index: true, unique: true },
   private: { type: Boolean, default: false },
   image: { type: String, ref: 'Image' },

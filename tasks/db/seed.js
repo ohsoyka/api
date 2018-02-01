@@ -15,6 +15,15 @@ const getFileNameFromURL = fileURL => {
   return path.basename(url.pathname);
 };
 
+const pages = [
+  {
+    id: 1,
+    title: 'Про',
+    path: 'about',
+    body: '<p>Бла-бла, шось про шось</p>',
+  }
+];
+
 const projects = [
   {
     id: 1,
@@ -27,7 +36,7 @@ const projects = [
     title: 'Вафлі та печиво',
     path: 'waffles-and-cookies',
     description: 'Пошуки найкращих українських виробників вафель і печива.',
-    body: 'Традиції української випічки давні і прекрасні. Але з роками мистецтво випікання втрачається, і чим далі, тим більше наші печиво та вафлі страждає від глобалізації і втрачає свої родзинки (в прямому і переносному значенні). Проект «Вафлі та печиво» розкаже вам про останніх хранителів традиційних рецептів вафель і печива в Україні.',
+    body: '<p>Традиції української випічки давні і прекрасні. Але з роками мистецтво випікання втрачається, і чим далі, тим більше наші печиво та вафлі страждає від глобалізації і втрачає свої родзинки (в прямому і переносному значенні). Проект «Вафлі та печиво» розкаже вам про останніх хранителів традиційних рецептів вафель і печива в Україні.</p>',
     image: 'https://static.poohitan.com/images/1517482873261_waffles.jpg',
   },
   {
@@ -276,6 +285,7 @@ connectToDB()
       return models.project.create(Object.assign({}, project, { image: image._id }));
     })),
     Promise.all(users.map(user => models.user.create(user))),
+    Promise.all(pages.map(page => models.page.create(page))),
   ]))
   .then(([categories, projects]) =>
       Promise.all(articles.map(async article => {
