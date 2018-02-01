@@ -14,6 +14,13 @@ const config = {
       port: 27017,
     },
 
+    digitalOcean: {
+      spaces: {
+        name: 'ohsoyka',
+        endpoint: 'ams3.digitaloceanspaces.com',
+      },
+    },
+
     jwtSecret: 'supersecret',
   },
 
@@ -39,6 +46,13 @@ const config = {
     git: {
       repo: 'git@github.com:ohsoyka/api.git',
       branch: 'stable',
+    },
+
+    digitalOcean: {
+      spaces: {
+        name: 'ohsoyka',
+        endpoint: 'ams3.digitaloceanspaces.com',
+      },
     },
 
     jwtSecret: process.env.OHSOYKA_JWT_SECRET,
