@@ -25,7 +25,7 @@ const config = {
   },
 
   production: {
-    port: 3000,
+    port: 3300,
     clientURL: 'https://ohsoyka.com',
     apiURL: 'https://api.ohsoyka.com',
     staticURL: 'https://static.ohsoyka.com',
