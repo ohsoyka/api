@@ -43,8 +43,18 @@ const config = {
       port: 27017,
     },
 
+    server: {
+      host: '46.101.99.203',
+      username: 'poohitan',
+      folder: '~ohsoyka.com/api',
+    },
+
+    pm2: {
+      appName: 'ohsoyka-api',
+    },
+
     git: {
-      repo: 'git@github.com:ohsoyka/api.git',
+      repo: 'git@bitbucket.org:soyka/api.git',
       branch: 'stable',
     },
 
