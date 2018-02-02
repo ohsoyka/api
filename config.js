@@ -46,7 +46,7 @@ const config = {
     server: {
       host: '46.101.99.203',
       username: 'poohitan',
-      folder: '~ohsoyka.com/api',
+      folder: '~/ohsoyka.com/api',
     },
 
     pm2: {
