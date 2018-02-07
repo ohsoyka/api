@@ -22,10 +22,10 @@ function manageUpload(req, onFile) {
   });
 }
 
-router.post('/', (req, res, next) => {
+router.post('/', routeProtector, (req, res, next) => {
   const uploads = [];
 
-  manageUpload(req, routeProtector, (file, filename, mimeType) => {
+  manageUpload(req, (file, filename, mimeType) => {
     const uploadPromise = createImage({ file, filename, mimeType });
 
     uploads.push(uploadPromise);
