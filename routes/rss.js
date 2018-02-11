@@ -27,7 +27,7 @@ router.get('/', async (req, res, next) => {
       populate: 'image',
     });
 
-    docs.forEach(article => {
+    docs.forEach((article) => {
       const url = `${config.clientURL}/${article.path}`;
 
       feed.item({

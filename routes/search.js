@@ -53,7 +53,7 @@ router.get('/', (req, res, next) => {
         ...articlesSearchResults,
         ...pagesSearchResults,
         ...projectsSearchResults,
-        ...categoriesSearchResults
+        ...categoriesSearchResults,
       ]
         .sort((left, right) => {
           if (left.score > right.score) {
