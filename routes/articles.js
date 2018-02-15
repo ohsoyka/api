@@ -42,13 +42,21 @@ router.get('/:article_path', async (req, res, next) => {
   try {
     const populations = generateQueryPopulations(req.query.include);
 
-    const article = await models.article.findOneAndUpdate({
-      path: req.params.article_path,
-    }, {
-      $inc: { views: 1 },
-    }, {
-      new: true,
-    }).populate(populations);
+    let article;
+
+    if (req.isAuthenticated) {
+      article = await models.article
+        .findOne({ path: req.params.article_path })
+        .populate(populations);
+    } else {
+      await models.article.findOneAndUpdate({
+        path: req.params.article_path,
+      }, {
+        $inc: { views: 1 },
+      }, {
+        new: true,
+      }).populate(populations);
+    }
 
     if (!article) {
       return next({ status: HttpStatus.NOT_FOUND });
