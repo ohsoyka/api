@@ -8,6 +8,22 @@ const errorHandler = require('../middlewares/error-handler');
 
 const router = express.Router();
 
+function getArticleAsUser(path, populations) {
+  return models.article.findOneAndUpdate({
+    path,
+  }, {
+    $inc: { views: 1 },
+  }, {
+    new: true,
+  }).populate(populations);
+}
+
+function getArticleAsAdmin(path, populations) {
+  return models.article
+    .findOne({ path })
+    .populate(populations);
+}
+
 router.get('/', async (req, res, next) => {
   try {
     const filter = generateQueryFilter({ model: models.article, query: req.query });
@@ -40,23 +56,11 @@ router.get('/', async (req, res, next) => {
 
 router.get('/:article_path', async (req, res, next) => {
   try {
+    const path = req.params.article_path;
     const populations = generateQueryPopulations(req.query.include);
-
-    let article;
-
-    if (req.isAuthenticated) {
-      article = await models.article
-        .findOne({ path: req.params.article_path })
-        .populate(populations);
-    } else {
-      await models.article.findOneAndUpdate({
-        path: req.params.article_path,
-      }, {
-        $inc: { views: 1 },
-      }, {
-        new: true,
-      }).populate(populations);
-    }
+    const article = req.isAuthenticated
+      ? await getArticleAsAdmin(path, populations)
+      : await getArticleAsUser(path, populations);
 
     if (!article) {
       return next({ status: HttpStatus.NOT_FOUND });
