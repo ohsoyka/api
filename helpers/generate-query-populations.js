@@ -15,9 +15,10 @@ function populationStringToObject(string) {
 
   const restProperties = string.slice(firstDotIndex + 1);
 
-  return Object.assign({}, result, {
+  return {
+    ...result,
     populate: populationStringToObject(restProperties),
-  });
+  };
 }
 
 module.exports = (populationString) => {
@@ -34,7 +35,7 @@ module.exports = (populationString) => {
       result[path].push(item);
     }
 
-    return Object.assign({ [path]: [item] }, result);
+    return { [path]: [item], ...result };
   }, {});
 
   const populationObjects = Object.values(itemsGroupedByTopLevelPath)
@@ -42,4 +43,3 @@ module.exports = (populationString) => {
 
   return populationObjects;
 };
-

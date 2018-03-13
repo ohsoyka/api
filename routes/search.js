@@ -6,10 +6,11 @@ const generateQueryPopulations = require('../helpers/generate-query-populations'
 const router = express.Router();
 
 function searchText(model, query, additionalFields = {}, populations = {}) {
-  const findParams = Object.assign({
+  const findParams = {
     $text: { $search: `${query}` },
     deleted: false,
-  }, additionalFields);
+    ...additionalFields,
+  };
 
   return model
     .find(findParams, {

@@ -17,7 +17,7 @@ module.exports = ({ file, filename, mimeType }) => {
     .then(url => ({ url, size }))))
     .then((uploadResult) => {
       const imageObject = uploadResult.reduce((result, { url, size }) =>
-        Object.assign({}, result, { [size]: url }), { _id: id });
+        ({ ...result, [size]: url }), { _id: id });
 
       return models.image.create(imageObject);
     });

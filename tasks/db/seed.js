@@ -268,7 +268,7 @@ connectToDB()
 
       Logger.log('Creating category', category.title);
 
-      return models.category.create(Object.assign({}, category, { image: image._id }));
+      return models.category.create({ ...category, image: image._id });
     })),
     Promise.all(projects.map(async project => {
       let image = {};
@@ -282,7 +282,7 @@ connectToDB()
 
       Logger.log('Creating project', project.title);
 
-      return models.project.create(Object.assign({}, project, { image: image._id }));
+      return models.project.create({ ...project, image: image._id });
     })),
     Promise.all(users.map(user => models.user.create(user))),
     Promise.all(pages.map(page => models.page.create(page))),
@@ -300,11 +300,12 @@ connectToDB()
 
         Logger.log('Creating article', article.title);
 
-        return models.article.create(Object.assign({}, article, {
+        return models.article.create({
+          ...article,
           category: categories.find(category => category.path === article.category),
           project: projects.find(project => project.path === article.project),
           image: image._id,
-        }))
+        })
       })))
   .then(() => Promise.all(Object.keys(models).map(modelName => models[modelName].ensureIndexes())))
   .then(() => Logger.success('Successfully seeded the database.'))
