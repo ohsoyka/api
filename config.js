@@ -54,7 +54,7 @@ const config = {
     },
 
     git: {
-      repo: 'git@bitbucket.org:soyka/api.git',
+      repo: 'git@github.com:ohsoyka/api.git',
       branch: 'stable',
     },
 
