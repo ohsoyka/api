@@ -24,7 +24,7 @@ app.use(corsHandler);
 app.use(authParser);
 
 app.get('/', (req, res) => {
-  res.send(HttpStatus.OK);
+  res.sendStatus(HttpStatus.OK);
 });
 
 Object.keys(routes).forEach((route) => {
