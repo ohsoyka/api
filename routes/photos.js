@@ -34,10 +34,10 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/:photo_path', async (req, res, next) => {
+router.get('/:photo_id', async (req, res, next) => {
   try {
     const populations = generateQueryPopulations(req.query.include);
-    const photo = await models.photo.findOne({ path: req.params.photo_path }).populate(populations);
+    const photo = await models.photo.findOne({ path: req.params.photo_id }).populate(populations);
 
     if (!photo) {
       return next({ status: HttpStatus.NOT_FOUND });
@@ -59,10 +59,10 @@ router.post('/', routeProtector, async (req, res, next) => {
   }
 });
 
-router.patch('/:photo_path', routeProtector, async (req, res, next) => {
+router.patch('/:photo_id', routeProtector, async (req, res, next) => {
   try {
     const photo = await models.photo.findOneAndUpdate({
-      path: req.params.photo_path,
+      path: req.params.photo_id,
     }, req.body, { new: true });
 
     res.json(photo.serialize());
@@ -71,9 +71,9 @@ router.patch('/:photo_path', routeProtector, async (req, res, next) => {
   }
 });
 
-router.delete('/:photo_path', routeProtector, async (req, res, next) => {
+router.delete('/:photo_id', routeProtector, async (req, res, next) => {
   try {
-    await models.photo.delete({ path: req.params.photo_path });
+    await models.photo.delete({ path: req.params.photo_id });
 
     res.json({});
   } catch (error) {
