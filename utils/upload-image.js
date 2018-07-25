@@ -1,5 +1,6 @@
 const aws = require('aws-sdk');
 const sharp = require('sharp');
+const stream = require('stream');
 const Logger = require('logger');
 const uuid = require('uuid');
 const mime = require('mime-types');
@@ -22,14 +23,18 @@ const SIZES = {
 function resize(width) {
   return sharp()
     .resize(width, null)
-    .withoutEnlargement();
+    .withoutEnlargement()
+    .jpeg({
+      progressive: true,
+      quality: 80,
+    });
 }
 
 module.exports = function upload({
   file, filename, id = uuid.v4(), size = 'original', mimeType = mime.lookup(filename),
 }) {
   const width = SIZES[size];
-  const processedFile = size === 'original' ? file.pipe(sharp()) : file.pipe(resize(width));
+  const processedFile = size === 'original' ? file.pipe(new stream.PassThrough()) : file.pipe(resize(width));
 
   return s3.upload({
     Bucket: config.digitalOcean.spaces.name,
