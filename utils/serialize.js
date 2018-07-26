@@ -1,8 +1,11 @@
 const _ = require('lodash');
 
+const isModel = value => value && typeof value === 'object' && Object.keys(value).includes('_id');
+const isArrayOfModels = value => value && Array.isArray(value) && value.some(item => item._id);
+
 function normalize(object) {
-  const subobjects = _.toPairs(object)
-    .filter(([, value]) => value && typeof value === 'object' && Object.keys(value).includes('_id'));
+  const nestedObjects = _.toPairs(object)
+    .filter(([, value]) => isModel(value) || isArrayOfModels(value));
 
   const privateProperties = Object.keys(object).filter(property => property[0] === '_');
 
@@ -11,13 +14,22 @@ function normalize(object) {
   clone.id = clone._id;
   privateProperties.forEach(property => delete clone[property]);
 
-  if (!subobjects.length) {
-    return clone;
-  }
+  nestedObjects.forEach(([property]) => delete clone[property]);
 
-  subobjects.forEach(([property]) => delete clone[property]);
+  return nestedObjects
+    .map(([property, value]) => {
+      if (Array.isArray(value)) {
+        return {
+          property,
+          value: value.map(item => normalize(item)),
+        };
+      }
 
-  return subobjects.map(([property, value]) => ({ property, value: normalize(value) }))
+      return {
+        property,
+        value: normalize(value),
+      };
+    })
     .reduce((result, { property, value }) => _.merge({}, result, { [property]: value }), clone);
 }
 

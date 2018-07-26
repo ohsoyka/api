@@ -245,6 +245,53 @@ const articles = [
     },
 ];
 
+const photoAlbums = [
+  {
+    id: 1,
+    title: 'Тестовий альбом',
+    description: 'Опис тестового альбому',
+    cover: 'https://static.poohitan.com/images/1517481606448_vika2.JPG',
+    photos: [
+      'https://static.poohitan.com/images/1517481606448_vika2.JPG',
+      'https://static.poohitan.com/images/1517481606070_vika1.JPG',
+    ]
+  },
+  {
+    id: 2,
+    title: 'Всяке різне',
+    description: 'Опис ше одного тестового альбому',
+    cover: 'https://static.poohitan.com/images/1526166791862_DSCF0361-.jpg',
+    photos: [
+      'http://www.noaa.gov/sites/default/files/styles/scale_crop_1120x534_2x/public/thumbnails/image/PHOTO-2017%20Winter%20Outlook_Through%20the%20snowstorm-iStock-641688354-1125x534-Landscape.jpg?itok=hDuP3AQ1',
+      'https://image.freepik.com/free-vector/abstract-white-background-vector-illustration_1407-419.jpg',
+      'https://static.poohitan.com/images/1515182829164_IMG_2272.jpg',
+      'https://static.poohitan.com/images/1516140719473_vJOdkWnWg7Y.jpg',
+      'https://static.poohitan.com/images/1526164957229_DSCF0486-.jpg',
+      'https://static.poohitan.com/images/1526166791862_DSCF0361-.jpg',
+      'https://static.poohitan.com/images/1514997219475_dzharylhach_IMG_0142.JPG',
+      'https://static.poohitan.com/images/1514997478709_rc_wide_oil_fb_narrow.jpg',
+      'https://static.poohitan.com/images/1526166928605_DSCF0418-.jpg',
+      'https://static.poohitan.com/images/1526166246495_DSCF0556-.jpg',
+      'https://static.poohitan.com/images/1514997222750_dzharylhach_IMG_0305.JPG',
+      'https://static.poohitan.com/images/1514997223471_dzharylhach_IMG_0309.JPG',
+      'https://static.poohitan.com/images/1520011055919_DXS8r1WX4AIVS-1.jpglarge.jpg',
+      'https://static.poohitan.com/images/1514997226259_dzharylhach_IMG_0386.JPG',
+    ]
+  },
+  {
+    id: 3,
+    title: 'Велосипедні штуки',
+    cover: 'https://static.poohitan.com/images/1527165836670_DSCF1178.jpg',
+    photos: [
+      'https://static.poohitan.com/images/1527165836670_DSCF1178.jpg',
+      'https://static.poohitan.com/images/1526455824362_1526455815556.jpg',
+      'https://static.poohitan.com/images/1526455996066_1526455989354.jpg',
+      'https://static.poohitan.com/images/1518629137937_1518629137023.jpg',
+      'https://static.poohitan.com/images/1514997251724_orbita_IMG_1692.JPG'
+    ]
+  }
+];
+
 const users = [
   {
     login: 'poohitan',
@@ -254,59 +301,104 @@ const users = [
   },
 ];
 
+const createCategories = () => Promise.all(categories.map(async category => {
+  let image = {};
+
+  if (category.image) {
+    image = await createImage({
+      file: request(category.image),
+      filename: getFileNameFromURL(category.image),
+    });
+  }
+
+  Logger.log('Creating category', category.title);
+
+  return models.category.create({ ...category, image: image._id });
+}));
+
+const createProjects = () => Promise.all(projects.map(async project => {
+  let image = {};
+
+  if (project.image) {
+    image = await createImage({
+      file: request(project.image),
+      filename: getFileNameFromURL(project.image),
+    });
+  }
+
+  Logger.log('Creating project', project.title);
+
+  return models.project.create({ ...project, image: image._id });
+}));
+
+const createUsers = () => Promise.all(users.map(user => models.user.create(user)));
+
+const createPages = () => Promise.all(pages.map(page => models.page.create(page)));
+
+const createArticles = (categories, projects) => Promise.all(articles.map(async article => {
+  let image = {};
+
+  if (article.image) {
+    image = await createImage({
+      file: request(article.image),
+      filename: getFileNameFromURL(article.image),
+    });
+  }
+
+  Logger.log('Creating article', article.title);
+
+  return models.article.create({
+    ...article,
+    category: categories.find(category => category.path === article.category),
+    project: projects.find(project => project.path === article.project),
+    image: image._id,
+  })
+}));
+
+const createPhotoAlbums = () => Promise.all(photoAlbums.map(async album => {
+  Logger.log('Creating photo album', album.title);
+
+  const photos = await createPhotos(album.photos);
+  const cover = await createImage({
+    file: request(album.cover),
+    filename: getFileNameFromURL(album.cover),
+  });
+
+  return models.photoAlbum.create({
+    ...album,
+    cover: cover._id,
+    photos: photos.filter(photo => photo).map(photo => photo._id)
+  })
+}));
+
+const createPhotos = (photos) => Promise.all(photos.map(async photo => {
+  Logger.log('Uploading a photo', photo);
+
+  try {
+    const image = await createImage({
+      file: request(photo),
+      filename: getFileNameFromURL(photo),
+    });
+
+    return models.photo.create({
+      ...photo,
+      image: image._id,
+    });
+  } catch (error) {
+    Logger.error('Failed to upload photo', photo);
+    return null;
+  }
+}));
+
 connectToDB()
   .then(() => Promise.all([
-    Promise.all(categories.map(async category => {
-      let image = {};
-
-      if (category.image) {
-        image = await createImage({
-          file: request(category.image),
-          filename: getFileNameFromURL(category.image),
-        });
-      }
-
-      Logger.log('Creating category', category.title);
-
-      return models.category.create({ ...category, image: image._id });
-    })),
-    Promise.all(projects.map(async project => {
-      let image = {};
-
-      if (project.image) {
-        image = await createImage({
-          file: request(project.image),
-          filename: getFileNameFromURL(project.image),
-        });
-      }
-
-      Logger.log('Creating project', project.title);
-
-      return models.project.create({ ...project, image: image._id });
-    })),
-    Promise.all(users.map(user => models.user.create(user))),
-    Promise.all(pages.map(page => models.page.create(page))),
+    createCategories(),
+    createProjects(),
+    createUsers(),
+    createPages(),
+    createPhotoAlbums(),
   ]))
-  .then(([categories, projects]) =>
-      Promise.all(articles.map(async article => {
-        let image = {};
-
-        if (article.image) {
-          image = await createImage({
-            file: request(article.image),
-            filename: getFileNameFromURL(article.image),
-          });
-        }
-
-        Logger.log('Creating article', article.title);
-
-        return models.article.create({
-          ...article,
-          category: categories.find(category => category.path === article.category),
-          project: projects.find(project => project.path === article.project),
-          image: image._id,
-        })
-      })))
+  .then(([categories, projects]) => createArticles(categories, projects))
   .then(() => Promise.all(Object.keys(models).map(modelName => models[modelName].ensureIndexes())))
   .then(() => Logger.success('Successfully seeded the database.'))
   .catch(error => Logger.error(error))
