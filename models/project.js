@@ -12,11 +12,15 @@ module.exports = model('Project', {
   indexes: [
     [
       {
-        title: 'text', description: 'text',
+        title: 'text',
+        description: 'text',
+        path: 'text',
       },
       {
         weights: {
-          title: 10, description: 5,
+          title: 10,
+          description: 5,
+          path: 7,
         },
       },
     ],

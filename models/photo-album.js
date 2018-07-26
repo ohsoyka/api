@@ -10,6 +10,22 @@ module.exports = model('PhotoAlbum', {
   cover: { type: String, ref: 'Image' },
   photos: [{ type: String, ref: 'Photo' }],
 }, {
+  indexes: [
+    [
+      {
+        title: 'text',
+        description: 'text',
+        path: 'text',
+      },
+      {
+        weights: {
+          title: 10,
+          description: 7,
+          path: 7,
+        },
+      },
+    ],
+  ],
   middlewares: {
     save: {
       pre(next) {

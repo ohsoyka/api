@@ -10,11 +10,15 @@ module.exports = model('Page', {
   indexes: [
     [
       {
-        title: 'text', body: 'text',
+        title: 'text',
+        body: 'text',
+        path: 'text',
       },
       {
         weights: {
-          title: 10, body: 5,
+          title: 10,
+          body: 5,
+          path: 7,
         },
       },
     ],

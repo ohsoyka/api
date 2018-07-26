@@ -23,10 +23,15 @@ module.exports = model('Article', {
         intro: 'text',
         brief: 'text',
         body: 'text',
+        path: 'text',
       },
       {
         weights: {
-          title: 10, brief: 7, intro: 5, body: 5,
+          title: 10,
+          brief: 7,
+          intro: 5,
+          body: 5,
+          path: 7,
         },
       },
     ],
