@@ -6,9 +6,9 @@ const config = require('../config').current;
 const verifyToken = util.promisify(jwt.verify);
 
 module.exports = async (req, res, next) => {
-  const { token } = req.cookies;
-
   req.isAuthenticated = false;
+
+  const { token } = req.cookies || req.query;
 
   if (!token) {
     return next();
