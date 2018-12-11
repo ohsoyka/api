@@ -20,9 +20,10 @@ const SIZES = {
   small: 800,
 };
 
-function resize(width) {
+function resize(longerEdgeSize) {
   return sharp()
-    .resize(width, null)
+    .resize(longerEdgeSize, longerEdgeSize)
+    .max()
     .withoutEnlargement()
     .jpeg({
       progressive: true,
@@ -33,8 +34,10 @@ function resize(width) {
 module.exports = function upload({
   file, filename, id = uuid.v4(), size = 'original', mimeType = mime.lookup(filename),
 }) {
-  const width = SIZES[size];
-  const processedFile = size === 'original' ? file.pipe(new stream.PassThrough()) : file.pipe(resize(width));
+  const desiredLongerEdgeSize = SIZES[size];
+  const processedFile = size === 'original'
+    ? file.pipe(new stream.PassThrough())
+    : file.pipe(resize(desiredLongerEdgeSize));
 
   return s3.upload({
     Bucket: config.digitalOcean.spaces.name,
