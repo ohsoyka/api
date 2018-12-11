@@ -92,14 +92,12 @@ router.get('/:photo_album_path/download', routeProtector, async (req, res, next)
       .findOne({ path: req.params.photo_album_path })
       .populate(generateQueryPopulations('photos, photos.image, cover'));
 
-    const originalImagesURLs = [
-      photoAlbum.cover.original,
-      ...photoAlbum.photos.map(photo => photo.image.original),
-    ];
+    const { size = 'original' } = req.query;
+    const archiveFileName = `${photoAlbum.path}_${size}.zip`;
 
     res.set({
       'Content-Type': 'application/zip',
-      'Content-Disposition': `attachment; filename="${photoAlbum.path}.zip"`,
+      'Content-Disposition': `attachment; filename="${archiveFileName}"`,
     });
 
     const archive = archiver('zip');
@@ -107,9 +105,14 @@ router.get('/:photo_album_path/download', routeProtector, async (req, res, next)
     archive.on('error', error => next(error));
     archive.pipe(res);
 
-    originalImagesURLs.forEach((imageURL) => {
+    const imagesURLs = [
+      photoAlbum.cover[size],
+      ...photoAlbum.photos.map(photo => photo.image[size]),
+    ];
+
+    imagesURLs.forEach((imageURL) => {
       const urlTokens = imageURL.split('/');
-      const fileName = urlTokens[urlTokens.length - 1].replace('original_', '');
+      const fileName = urlTokens[urlTokens.length - 1].replace(`${size}_`, '');
 
       archive.append(request(imageURL), { name: fileName });
     });
