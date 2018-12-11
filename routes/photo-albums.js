@@ -1,5 +1,7 @@
 const express = require('express');
 const HttpStatus = require('http-status-codes');
+const request = require('request');
+const archiver = require('archiver');
 const models = require('../models');
 const generateQueryFilter = require('../helpers/generate-query-filter');
 const generateQueryPopulations = require('../helpers/generate-query-populations');
@@ -37,7 +39,9 @@ router.get('/', async (req, res, next) => {
 router.get('/:photo_album_path', async (req, res, next) => {
   try {
     const populations = generateQueryPopulations(req.query.include);
-    const photoAlbum = await models.photoAlbum.findOne({ path: req.params.photo_album_path }).populate(populations);
+    const photoAlbum = await models.photoAlbum
+      .findOne({ path: req.params.photo_album_path })
+      .populate(populations);
 
     if (!photoAlbum) {
       return next({ status: HttpStatus.NOT_FOUND });
@@ -76,6 +80,41 @@ router.delete('/:photo_album_path', routeProtector, async (req, res, next) => {
     await models.photoAlbum.delete({ path: req.params.photo_album_path });
 
     res.json({});
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.get('/:photo_album_path/download', routeProtector, async (req, res, next) => {
+  try {
+    const photoAlbum = await models.photoAlbum
+      .findOne({ path: req.params.photo_album_path })
+      .populate(generateQueryPopulations('photos, photos.image, cover'));
+
+    const originalImagesURLs = [
+      photoAlbum.cover.original,
+      ...photoAlbum.photos.map(photo => photo.image.original),
+    ];
+
+    res.set({
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename="${photoAlbum.path}.zip"`,
+    });
+
+    const archive = archiver('zip');
+
+    archive.on('error', error => next(error));
+    archive.pipe(res);
+
+    originalImagesURLs.forEach((imageURL) => {
+      const urlTokens = imageURL.split('/');
+      const fileName = urlTokens[urlTokens.length - 1].replace('original_', '');
+
+      archive.append(request(imageURL), { name: fileName });
+    });
+
+    archive.finalize();
   } catch (error) {
     next(error);
   }
