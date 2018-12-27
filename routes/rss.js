@@ -20,7 +20,7 @@ router.get('/', async (req, res, next) => {
       pubDate: moment().toDate(),
     });
 
-    const { docs } = await models.article.paginate({ private: false }, {
+    const { docs } = await models.article.paginate({ hidden: false }, {
       page: 1,
       limit: FEED_MAX_ITEMS,
       sort: '-publishedAt',

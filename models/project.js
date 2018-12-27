@@ -6,7 +6,7 @@ module.exports = model('Project', {
   description: String,
   body: String,
   path: { type: String, index: true, unique: true },
-  private: { type: Boolean, default: false },
+  hidden: { type: Boolean, default: false },
   image: { type: String, ref: 'Image' },
 }, {
   indexes: [

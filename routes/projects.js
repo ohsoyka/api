@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
     const populations = generateQueryPopulations(req.query.include);
 
     if (!req.isAuthenticated) {
-      filter.private = false;
+      filter.hidden = false;
     }
 
     const { page = 1, limit = Number.MAX_SAFE_INTEGER } = req.query;

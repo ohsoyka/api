@@ -6,7 +6,7 @@ module.exports = model('PhotoAlbum', {
   description: String,
   path: { type: String, index: true, unique: true },
   shootAt: { type: Date, default: () => new Date() },
-  private: { type: Boolean, default: false },
+  hidden: { type: Boolean, default: false },
   cover: { type: String, ref: 'Image' },
   photos: [{ type: String, ref: 'Photo' }],
 }, {

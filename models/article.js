@@ -11,7 +11,7 @@ module.exports = model('Article', {
   tags: [String],
   views: { type: Number, default: 0 },
   path: { type: String, index: true, unique: true },
-  private: { type: Boolean, default: false },
+  hidden: { type: Boolean, default: false },
   image: { type: String, ref: 'Image' },
   category: { type: String, ref: 'Category' },
   project: { type: String, ref: 'Project' },
