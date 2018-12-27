@@ -5,7 +5,7 @@ module.exports = model('Category', {
   title: String,
   description: String,
   path: { type: String, index: true, unique: true },
-  private: { type: Boolean, default: false },
+  hidden: { type: Boolean, default: false },
   image: { type: String, ref: 'Image' },
 }, {
   indexes: [
