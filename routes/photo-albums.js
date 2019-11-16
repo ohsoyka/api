@@ -107,7 +107,9 @@ router.get('/:photo_album_path/download', routeProtector, async (req, res, next)
 
     const imagesURLs = [
       photoAlbum.cover[size],
-      ...photoAlbum.photos.map(photo => photo.image[size]),
+      ...photoAlbum.photos
+        .map(photo => photo.image[size])
+        .filter(url => url),
     ];
 
     imagesURLs.forEach((imageURL) => {
