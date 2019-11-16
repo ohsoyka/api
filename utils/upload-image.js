@@ -22,9 +22,10 @@ const SIZES = {
 
 function resize(longerEdgeSize) {
   return sharp()
-    .resize(longerEdgeSize, longerEdgeSize)
-    .max()
-    .withoutEnlargement()
+    .resize(longerEdgeSize, longerEdgeSize, {
+      withoutEnlargement: true,
+      fit: 'inside',
+    })
     .jpeg({
       progressive: true,
       quality: 80,
