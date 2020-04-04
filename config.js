@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const config = {
   development: {
     port: 3200,
@@ -65,7 +67,7 @@ const config = {
       },
     },
 
-    jwtSecret: process.env.OHSOYKA_JWT_SECRET,
+    jwtSecret: process.env.JWT_SECRET,
   },
 };
 
