@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon app.js",
     "lint": "eslint \"**/*.js\"",
-    "seed": "npm run drop && export AWS_ACCESS_KEY_ID=$OHSOYKA_DO_SPACE_KEY && export AWS_SECRET_ACCESS_KEY=$OHSOYKA_DO_SPACE_SECRET && node tasks/db/seed.js",
+    "seed": "npm run drop && node tasks/db/seed.js",
     "drop": "node tasks/db/drop.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

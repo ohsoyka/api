@@ -10,7 +10,7 @@ const config = require('../config').current;
 const signToken = util.promisify(jwt.sign);
 const router = express.Router();
 
-console.log('ENV', process.env);
+console.log('ENV', process.env.env);
 
 router.post('/', async (req, res, next) => {
   try {
