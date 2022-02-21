@@ -1,7 +1,5 @@
 require('dotenv').config();
 
-console.log(process.env.JWT_SECRET);
-
 module.exports = {
   apps: [{
     name: 'ohsoyka-api',
@@ -29,7 +27,7 @@ module.exports = {
       ref: 'origin/master',
       repo: 'git@github.com:ohsoyka/api.git',
       path: '/home/poohitan/ohsoyka.com/api',
-      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production --update-env',
+      'post-deploy': 'npm install && pm2 reload ecosystem.config.js --env production',
     },
   },
 };
